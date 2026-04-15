@@ -1,4 +1,6 @@
-# LLM Wiki Agent — Schema & Workflow Instructions
+# DataJoint LLM Wiki — Schema & Workflow Instructions
+
+**Domain:** This wiki covers [DataJoint](https://datajoint.com), a Python framework for scientific data pipelines. Sources are the official DataJoint documentation (how-to guides, reference docs, concept explanations, and changelogs). The target audience is researchers and engineers building reproducible data pipelines with DataJoint.
 
 This wiki is maintained entirely by Claude Code. No API key or Python scripts needed — just open this repo in Claude Code and talk to it.
 
@@ -6,16 +8,16 @@ This wiki is maintained entirely by Claude Code. No API key or Python scripts ne
 
 | Command | What to say |
 |---|---|
-| `/wiki-ingest` | `ingest raw/my-article.md` |
-| `/wiki-query` | `query: what are the main themes?` |
+| `/wiki-ingest` | `ingest raw/define-tables.md` |
+| `/wiki-query` | `query: how does populate() work?` |
 | `/wiki-lint` | `lint the wiki` |
 | `/wiki-graph` | `build the knowledge graph` |
 
 Or just describe what you want in plain English:
-- *"Ingest this file: raw/papers/attention-is-all-you-need.md"*
-- *"What does the wiki say about transformer models?"*
+- *"Ingest this file: raw/query-algebra.md"*
+- *"What does the wiki say about the computation model?"*
 - *"Check the wiki for orphan pages and contradictions"*
-- *"Build the graph and show me what's connected to RAG"*
+- *"Build the graph and show me what's connected to populate()"*
 
 Claude Code reads this file automatically and follows the workflows below.
 
@@ -24,18 +26,39 @@ Claude Code reads this file automatically and follows the workflows below.
 ## Directory Layout
 
 ```
-raw/          # Immutable source documents — never modify these
+raw/          # Immutable DataJoint documentation sources — never modify these
 wiki/         # Claude owns this layer entirely
   index.md    # Catalog of all pages — update on every ingest
   log.md      # Append-only chronological record
   overview.md # Living synthesis across all sources
   sources/    # One summary page per source document
-  entities/   # People, companies, projects, products
-  concepts/   # Ideas, frameworks, methods, theories
+  entities/   # DataJoint classes, operators, API methods, and tools
+  concepts/   # Core DataJoint ideas, patterns, and frameworks
   syntheses/  # Saved query answers
 graph/        # Auto-generated graph data
 tools/        # Optional standalone Python scripts (require ANTHROPIC_API_KEY)
 ```
+
+## DataJoint Domain Context
+
+When ingesting docs and creating entity/concept pages, use these DataJoint-specific categories:
+
+**Entity types (wiki/entities/):**
+- Table classes: `Manual`, `Lookup`, `Imported`, `Computed`, `Part`
+- Core API: `Schema`, `populate()`, `fetch()`, `insert()`, `delete()`
+- Query operators: `Restriction`, `Join`, `Projection`, `Aggregation`, `Union`
+- Storage: `Blob`, `Attach`, `Filepath`, `ObjectStorage`, `Codec`
+- Tools: `DataJoint CLI`, `Jobs`, `ExternalStore`
+
+**Concept types (wiki/concepts/):**
+- `TableTiers` — Manual/Lookup/Imported/Computed hierarchy
+- `QueryAlgebra` — restriction, join, projection, aggregation, union
+- `ComputationModel` — populate(), make(), job queue, parallelism
+- `PrimaryKeys` — design rules, entity integrity
+- `ObjectStorage` — blobs, attachments, external stores
+- `Normalization` — relational design principles for pipelines
+- `EntityIntegrity` — referential integrity, dependency graphs
+- `DefinitionSyntax` — table definition DSL syntax rules
 
 ---
 
@@ -104,44 +127,113 @@ source_file: raw/...
 
 ### Domain-Specific Templates
 
-If the source falls into a specific domain (e.g., personal diary, meeting notes), the agent should use a specialized template instead of the default generic one above:
+Use these DataJoint-specific templates based on the source document type:
 
-#### Diary / Journal Template
+#### How-To Guide Template (e.g. fetch-results.md, run-computations.md, insert-data.md)
 ```markdown
 ---
-title: "YYYY-MM-DD Diary"
+title: "How to <Action>"
 type: source
-tags: [diary]
+tags: [how-to]
 date: YYYY-MM-DD
+source_file: raw/...
 ---
-## Event Summary
-...
-## Key Decisions
-...
-## Energy & Mood
-...
+## Summary
+What this guide covers and when to use it.
+
+## Key Steps / Patterns
+- Step/pattern 1
+- Step/pattern 2
+
+## Code Examples
+Key code snippets from the source.
+
 ## Connections
-...
-## Shifts & Contradictions
-...
+- [[EntityName]] — how they relate
+- [[ConceptName]] — relevant concept
+
+## Gotchas / Notes
+Important caveats or non-obvious behaviors.
+
+## Contradictions
+- Contradicts [[OtherPage]] on: ...
 ```
 
-#### Meeting Notes Template
+#### Reference / API Doc Template (e.g. definition-syntax.md, type-system.md, operators.md)
 ```markdown
 ---
-title: "Meeting Title"
+title: "Reference: <Topic>"
 type: source
-tags: [meeting]
+tags: [reference]
 date: YYYY-MM-DD
+source_file: raw/...
 ---
-## Goal
-...
-## Key Discussions
-...
-## Decisions Made
-...
-## Action Items
-...
+## Summary
+What this reference covers.
+
+## Key Rules / Specifications
+- Rule 1
+- Rule 2
+
+## Examples
+Illustrative examples from the source.
+
+## Connections
+- [[ConceptName]] — conceptual context
+- [[EntityName]] — related API
+
+## Contradictions
+- Contradicts [[OtherPage]] on: ...
+```
+
+#### Conceptual Explanation Template (e.g. computation-model.md, query-algebra.md, normalization.md)
+```markdown
+---
+title: "Concept: <Name>"
+type: source
+tags: [explanation]
+date: YYYY-MM-DD
+source_file: raw/...
+---
+## Summary
+Core idea in 2–4 sentences.
+
+## Key Claims
+- Claim 1
+- Claim 2
+
+## Mental Model
+How to think about this concept.
+
+## Connections
+- [[ConceptName]] — how they relate
+- [[EntityName]] — where this manifests in the API
+
+## Contradictions
+- Contradicts [[OtherPage]] on: ...
+```
+
+#### Changelog / What's New Template (e.g. whats-new-21.md, whats-new-22.md)
+```markdown
+---
+title: "What's New in DataJoint <version>"
+type: source
+tags: [changelog]
+date: YYYY-MM-DD
+source_file: raw/...
+---
+## Summary
+Major changes in this version.
+
+## New Features
+- Feature 1
+- Feature 2
+
+## Breaking Changes / Migration Notes
+- Change 1
+
+## Connections
+- [[ConceptName]] — features related to this concept
 ```
 
 ---
@@ -194,9 +286,9 @@ If the user doesn't have Python/dependencies set up, instead generate the graph 
 
 ## Naming Conventions
 
-- Source slugs: `kebab-case` matching source filename
-- Entity pages: `TitleCase.md` (e.g. `OpenAI.md`, `SamAltman.md`)
-- Concept pages: `TitleCase.md` (e.g. `ReinforcementLearning.md`, `RAG.md`)
+- Source slugs: `kebab-case` matching source filename (e.g. `define-tables.md` → slug `define-tables`)
+- Entity pages: `TitleCase.md` (e.g. `Schema.md`, `Computed.md`, `populate.md`)
+- Concept pages: `TitleCase.md` (e.g. `QueryAlgebra.md`, `ComputationModel.md`, `TableTiers.md`)
 - Source pages: `kebab-case.md`
 
 ## Index Format
