@@ -27,6 +27,10 @@ wiki/
 └── syntheses/     saved Q&A — grows with use
 ```
 
+**Raw source docs** — `raw/` is not shipped with this repo. It is populated on demand from
+[datajoint/datajoint-docs src/](https://github.com/datajoint/datajoint-docs/tree/main/src)
+by running `/wiki-update-docs`. The wiki itself is fully self-contained without it.
+
 **Coding assistant skill** (`skills/datajoint-wiki/SKILL.md`) — answers DataJoint questions
 grounded in the wiki. Knows the fundamentals without reading a file; consults the wiki for
 nuanced design questions, API details, migration patterns, and errors. Offers to save non-obvious

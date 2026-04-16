@@ -81,7 +81,7 @@ Claude Code reads this file automatically and follows the workflows below.
 ## Directory Layout
 
 ```
-raw/          # Immutable DataJoint documentation sources — never modify these
+raw/          # DataJoint documentation sources — not shipped; populated by /wiki-update-docs
 wiki/         # Claude owns this layer entirely
   index.md    # Catalog of all pages — update on every ingest
   log.md      # Append-only chronological record

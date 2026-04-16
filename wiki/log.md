@@ -68,3 +68,4 @@ Parse recent entries: `grep "^## \[" wiki/log.md | tail -10`
 ## [2026-04-15] prune | Removed entities: DimitriYatsenko, DataJointInc — 68 nodes, 216 edges (195 extracted, 21 inferred)
 ## [2026-04-15] query | Should a Part table be used as a primary key for a different table?
 ## [2026-04-15] query | How can one add new keys to an existing table?
+## [2026-04-16] query | How to deal with make functions that do long-duration computations?

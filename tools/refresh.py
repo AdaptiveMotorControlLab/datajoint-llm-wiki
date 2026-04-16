@@ -24,7 +24,7 @@ REPO_ROOT = Path(__file__).parent.parent
 WIKI_DIR = REPO_ROOT / "wiki"
 RAW_DIR = REPO_ROOT / "raw"
 SOURCES_DIR = WIKI_DIR / "sources"
-REFRESH_CACHE = REPO_ROOT / "graph" / ".refresh_cache.json"
+REFRESH_CACHE = REPO_ROOT / "tools" / ".refresh_cache.json"
 
 
 def sha256(text: str) -> str:
