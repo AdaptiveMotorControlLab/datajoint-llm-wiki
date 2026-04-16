@@ -1,245 +1,140 @@
-# LLM Wiki Agent
+# DataJoint Wiki + Coding Assistant
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**A coding agent skill.** Drop source documents into `raw/` and type `/wiki-ingest` — the agent reads them, extracts knowledge, and builds a persistent interlinked wiki. Every new source makes the wiki richer. You never write it.
+A pre-populated wiki covering all [DataJoint 2.x](https://datajoint.com) documentation, paired
+with a coding assistant skill that grounds its answers in the wiki rather than guessing. Novel
+Q&A grows the wiki as shareable syntheses.
 
-> Most knowledge tools make you search your own notes. This one reads everything you've collected and writes a structured wiki that compounds over time — cross-references already built, contradictions already flagged, synthesis already done.
+> Based on [LLM Wiki Agent](https://github.com/SamurAIGPT/llm-wiki-agent) — a general-purpose
+> agent skill for building persistent, interlinked wikis from source documents.
 
-```
-/wiki-ingest raw/papers/attention-is-all-you-need.md
-```
+---
+
+## What's in the box
+
+**Pre-populated wiki** — 54 source pages, 12 concept pages, and growing syntheses covering the
+full DataJoint 2.x documentation: table tiers, query algebra, computation model, object storage,
+migration patterns, configuration, error reference, and more.
 
 ```
 wiki/
-├── index.md          catalog of all pages — updated on every ingest
-├── log.md            append-only record of every operation
-├── overview.md       living synthesis across all sources
-├── sources/          one summary page per source document
-├── entities/         people, companies, projects — auto-created
-├── concepts/         ideas, frameworks, methods — auto-created
-└── syntheses/        query answers filed back as wiki pages
-graph/
-├── graph.json        persistent node/edge data (SHA256-cached)
-└── graph.html        interactive vis.js visualization — open in any browser
+├── index.md       catalog of all pages
+├── overview.md    living synthesis across all sources
+├── sources/       54 pages — one per DataJoint doc
+├── concepts/      12 pages — deep dives (TableTiers, QueryAlgebra, EntityIntegrity, …)
+├── entities/      Schema, dj.Instance
+└── syntheses/     saved Q&A — grows with use
 ```
+
+**Coding assistant skill** (`skills/datajoint-wiki/SKILL.md`) — answers DataJoint questions
+grounded in the wiki. Knows the fundamentals without reading a file; consults the wiki for
+nuanced design questions, API details, migration patterns, and errors. Offers to save non-obvious
+answers as syntheses so the wiki grows over time.
+
+**Multi-tool adapters** — the same wiki and core concepts are exposed to:
+
+| Tool | File |
+|------|------|
+| Claude Code (skill, auto-trigger) | `skills/datajoint-wiki/SKILL.md` |
+| OpenAI Codex | `AGENTS.md` |
+| GitHub Copilot | `.github/copilot-instructions.md` |
+| Cursor | `.cursor/rules/datajoint.mdc` |
+
+---
 
 ## Install
 
-**Requires:** [Claude Code](https://claude.ai/code), [Codex](https://openai.com/codex), [Gemini CLI](https://github.com/google-gemini/gemini-cli), or any agent that reads a config file.
+No Python or API key needed for the wiki and skill.
+
+### Global (Claude Code — auto-triggers on DataJoint work)
 
 ```bash
-git clone https://github.com/SamurAIGPT/llm-wiki-agent.git
-cd llm-wiki-agent
+git clone <repo-url> ~/.claude/skills/datajoint-wiki
 ```
 
-Open in your agent — no API key or Python setup needed:
+Claude Code discovers `SKILL.md` under `~/.claude/skills/` and automatically invokes the skill
+whenever you are writing table definitions, `make()` methods, queries, or schema design. No
+slash command needed.
+
+### Project-scoped (Claude Code — explicit `/datajoint-wiki` only)
 
 ```bash
-claude      # reads CLAUDE.md + .claude/commands/
-codex       # reads AGENTS.md
-opencode    # reads AGENTS.md
-gemini      # reads GEMINI.md
+git clone <repo-url> .datajoint-wiki
+cp .datajoint-wiki/skills/datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md
 ```
+
+Or as a submodule:
+```bash
+git submodule add <repo-url> .datajoint-wiki
+cp .datajoint-wiki/skills/datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md
+```
+
+Project-scoped installs require an explicit `/datajoint-wiki` invocation. Use the global install
+if you want the assistant to engage automatically.
+
+### Other tools (Codex, Copilot, Cursor)
+
+Clone the repo anywhere and open it as your project. The adapter files (`AGENTS.md`,
+`.github/copilot-instructions.md`, `.cursor/rules/datajoint.mdc`) are picked up automatically
+by their respective tools.
+
+---
 
 ## Usage
 
-```
-/wiki-ingest raw/papers/my-paper.md          # ingest a source into the wiki
-/wiki-ingest raw/articles/my-article.md      # works on any markdown file
+### Coding assistant (Claude Code)
 
-/wiki-query "what are the main themes?"      # synthesize answer from wiki pages
-/wiki-query "how does X relate to Y?"        # with [[wikilink]] citations
-
-/wiki-lint                                   # find orphans, contradictions, gaps
-/wiki-graph                                  # build graph.html from all wikilinks
-```
-
-Plain English also works with any agent:
-```
-"Ingest this paper: raw/papers/llama2.md"
-"What does the wiki say about attention mechanisms?"
-"Check for contradictions across sources"
-"Build the knowledge graph and tell me the most connected nodes"
-```
-
-Works with any markdown source — articles, papers, book chapters, meeting notes, journal entries, research summaries.
-
-## What You Get
-
-**Persistent wiki** — structured markdown pages that accumulate across sessions. Unlike chat, nothing is lost.
-
-**Entity pages** — auto-created for every person, company, or project mentioned across sources. Updated each time a new source references them.
-
-**Concept pages** — auto-created for every key idea or framework. Cross-referenced to every source that discusses them.
-
-**Living overview** — `wiki/overview.md` is revised on every ingest to reflect the current synthesis across everything you've read.
-
-**Contradiction flags** — when a new source contradicts an existing claim, it's flagged at ingest time, not buried until query time.
-
-**Knowledge graph** — `graph.html` shows every wiki page as a node, every `[[wikilink]]` as an edge, and Claude-inferred implicit relationships as dotted edges. Community detection clusters related topics.
-
-**Lint reports** — orphan pages, broken links, missing entity pages, data gaps with suggested sources to fill them.
-
-## Use Cases
-
-### Research
-
-Going deep on a topic over weeks — reading papers, articles, reports.
+With a global install the skill fires automatically. You can also invoke it explicitly:
 
 ```
-/wiki-ingest raw/papers/attention-is-all-you-need.md
-/wiki-ingest raw/papers/llama2.md
-/wiki-ingest raw/papers/rag-survey.md
+/datajoint-wiki how should I design the PK for a session table?
+/datajoint-wiki my Computed table needs a new primary key attribute — what's the migration path?
+/datajoint-wiki when should I use a Part table vs a downstream Computed table?
+```
 
-# Wiki builds entity pages (Meta AI, Google Brain) and
-# concept pages (Attention, RLHF, Context Window) automatically.
+The skill answers from baked-in fundamentals when possible, reads the wiki for nuanced questions,
+and offers to save non-obvious answers as syntheses.
 
-/wiki-query "What are the main approaches to reducing hallucination?"
-/wiki-query "How has context window size evolved across models?"
+### Wiki commands
 
+```
+/wiki-query how does populate() determine key_source?
+/wiki-ingest raw/my-new-doc.md
 /wiki-lint
-# → "No sources on mixture-of-experts — consider the Mixtral paper"
 ```
-
-By the end you have a structured, interlinked reference — not a folder of PDFs you'll never reopen.
 
 ---
 
-### Reading a Book
+## Growing the wiki
 
-File each chapter as you go. Build out pages for characters, themes, arguments.
+When the skill saves a synthesis, it prompts you with the contribution command:
 
+```bash
+# Global install:
+cd ~/.claude/skills/datajoint-wiki
+
+# Project-scoped install:
+cd .datajoint-wiki
+
+git add wiki/syntheses/ wiki/log.md wiki/index.md
+git commit -m "synthesis: <title>"
+git push && gh pr create
 ```
-/wiki-ingest raw/book/chapter-01.md
-/wiki-ingest raw/book/chapter-02.md
 
-# Wiki creates entity and theme pages automatically.
-
-/wiki-query "How has the protagonist's motivation evolved?"
-/wiki-query "What contradictions exist in the author's argument so far?"
-
-/wiki-graph   # → graph.html shows every character/theme and how they connect
-```
-
-Think fan wikis like Tolkien Gateway — built as you read, with the agent doing all the cross-referencing.
+PRing syntheses back upstream makes the wiki richer for everyone.
 
 ---
-
-### Personal Knowledge Base
-
-Track goals, health, habits, self-improvement — file journal entries, articles, podcast notes.
-
-```
-/wiki-ingest raw/journal/2026-01-week1.md
-/wiki-ingest raw/articles/huberman-sleep-protocol.md
-/wiki-ingest raw/articles/atomic-habits-summary.md
-
-/wiki-query "What patterns show up in my journal entries about energy?"
-/wiki-query "What habits have I tried and what was the outcome?"
-```
-
-The wiki builds a structured picture over time. Concepts like "Sleep", "Exercise", "Deep Work" accumulate evidence from every source filed.
-
----
-
-### Business / Team Intelligence
-
-Feed in meeting transcripts, project docs, customer calls.
-
-```
-/wiki-ingest raw/meetings/q1-planning-transcript.md
-/wiki-ingest raw/docs/product-roadmap-2026.md
-/wiki-ingest raw/calls/customer-interview-acme.md
-
-/wiki-query "What feature requests have come up most across customer calls?"
-/wiki-query "What decisions were made in Q1 and what was the rationale?"
-
-/wiki-lint
-# → "Project X mentioned in 5 pages but no dedicated page"
-# → "Roadmap contradicts customer interview on priority of feature Y"
-```
-
-The wiki stays current because the agent does the maintenance no one wants to do.
-
----
-
-### Competitive Analysis
-
-Track a company, market, or technology over time.
-
-```
-/wiki-ingest raw/competitors/openai-announcements.md
-/wiki-ingest raw/market/ai-funding-report-q1.md
-
-/wiki-query "How do OpenAI and Anthropic differ on safety approach?"
-/wiki-query "Which companies announced multimodal models in the last 6 months?"
-/wiki-query "Competitive landscape summary as of today" --save
-```
-
-## The Graph
-
-Two-pass build:
-
-1. **Deterministic** — parses all `[[wikilinks]]` across wiki pages → edges tagged `EXTRACTED`
-2. **Semantic** — agent infers implicit relationships not captured by wikilinks → edges tagged `INFERRED` (with confidence score) or `AMBIGUOUS`
-
-Louvain community detection clusters nodes by topic. SHA256 cache means only changed pages are reprocessed. Output is a self-contained `graph.html` — no server, opens in any browser.
-
-## CLAUDE.md / AGENTS.md
-
-The schema file tells the agent how to maintain the wiki — page formats, ingest/query/lint/graph workflows, naming conventions. This is the key config file. Edit it to customize behavior for your domain.
-
-| Agent | Schema file |
-|---|---|
-| Claude Code | `CLAUDE.md` |
-| Codex / OpenCode | `AGENTS.md` |
-| Gemini CLI | `GEMINI.md` |
-
-## What Makes This Different from RAG
-
-| RAG | LLM Wiki Agent |
-|---|---|
-| Re-derives knowledge every query | Compiles once, keeps current |
-| Raw chunks as retrieval unit | Structured wiki pages |
-| No cross-references | Cross-references pre-built |
-| Contradictions surface at query time (maybe) | Flagged at ingest time |
-| No accumulation | Every source makes the wiki richer |
-
-## Obsidian Integration
-
-The wiki is designed to be browsed seamlessly in [Obsidian](https://obsidian.md). Since the agent maintains consistent `[[wikilinks]]`, you get a naturally growing knowledge graph in your vault.
-
-### Vault Symlink Pattern
-If you want to keep the LLM Wiki Agent repository separate from your main personal vault, use symlinks:
-1. Keep your working agent repository at e.g., `~/llm-wiki-agent`
-2. Create a symlink from your main Obsidian vault:
-   ```bash
-   ln -sfn ~/llm-wiki-agent/wiki ~/your-obsidian-vault/wiki
-   ```
-3. Use the [Obsidian Web Clipper](https://obsidian.md/clipper) or write directly to `raw/` in the agent repo to queue items for ingestion.
-
-> **Note:** If you ever move your local repo directory, remember to update the symlink, otherwise the `wiki/` directory will appear missing in Obsidian.
-
-### Recommended .obsidian Config
-- **Graph View:** Filter out `index.md` and `log.md` (e.g. `-file:index.md -file:log.md`) to avoid them becoming gravity wells in your Obsidian graph.
-- **Dataview:** Use the community plugin [Dataview](https://blacksmithgu.github.io/obsidian-dataview/) to query the YAML frontmatter the agent automatically injects (e.g., `type: source`, `tags: [diary]`).
 
 ## Tips
 
-- File good query answers back with `--save` — your explorations compound just like ingested sources
-- The wiki is a git repo — version history for free
-- Standalone Python scripts in `tools/` work without a coding agent (require `ANTHROPIC_API_KEY`)
+- The wiki is a git repo — full version history of every synthesis and ingest
+- `/wiki-lint` catches orphan pages, broken links, and data gaps
+- Standalone Python scripts in `tools/` (ingest, query, lint, refresh) work without a coding
+  agent — requires `ANTHROPIC_API_KEY` and `pip install litellm`
 
-## Tech Stack
-
-NetworkX + Louvain + Claude + vis.js. No server, no database, runs entirely locally. Everything is plain markdown files.
-
-## Related
-
-- [graphify](https://github.com/safishamsi/graphify) — graph-based knowledge extraction skill (inspiration for the graph layer)
-- [Vannevar Bush's Memex (1945)](https://en.wikipedia.org/wiki/Memex) — the original vision this resembles
+---
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT — see [LICENSE](LICENSE) for details.

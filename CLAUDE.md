@@ -69,14 +69,11 @@ PRing syntheses back upstream grows the shared wiki for all users.
 | `/wiki-ingest` | `ingest raw/define-tables.md` |
 | `/wiki-query` | `query: how does populate() work?` |
 | `/wiki-lint` | `lint the wiki` |
-| `/wiki-graph` | `build the knowledge graph` |
 
 Or just describe what you want in plain English:
 - *"Ingest this file: raw/query-algebra.md"*
 - *"What does the wiki say about the computation model?"*
 - *"Check the wiki for orphan pages and contradictions"*
-- *"Build the graph and show me what's connected to populate()"*
-
 Claude Code reads this file automatically and follows the workflows below.
 
 ---
@@ -93,7 +90,6 @@ wiki/         # Claude owns this layer entirely
   entities/   # DataJoint classes, operators, API methods, and tools
   concepts/   # Core DataJoint ideas, patterns, and frameworks
   syntheses/  # Saved query answers
-graph/        # Auto-generated graph data
 tools/        # Optional standalone Python scripts (require ANTHROPIC_API_KEY)
 ```
 
@@ -324,24 +320,6 @@ Output a lint report and ask if the user wants it saved to `wiki/lint-report.md`
 
 ---
 
-## Graph Workflow
-
-Triggered by: *"build the knowledge graph"* or `/wiki-graph`
-
-When the user asks to build the graph, run `tools/build_graph.py` which:
-- Pass 1: Parses all `[[wikilinks]]` → deterministic `EXTRACTED` edges
-- Pass 2: Infers implicit relationships → `INFERRED` edges with confidence scores
-- Runs Louvain community detection
-- Outputs `graph/graph.json` + `graph/graph.html`
-
-If the user doesn't have Python/dependencies set up, instead generate the graph data manually:
-1. Use Grep to find all `[[wikilinks]]` across wiki pages
-2. Build a node/edge list
-3. Write `graph/graph.json` directly
-4. Write `graph/graph.html` using the vis.js template
-
----
-
 ## Naming Conventions
 
 - Source slugs: `kebab-case` matching source filename (e.g. `define-tables.md` → slug `define-tables`)
@@ -378,4 +356,4 @@ Each entry starts with `## [YYYY-MM-DD] <operation> | <title>` so it's grep-pars
 grep "^## \[" wiki/log.md | tail -10
 ```
 
-Operations: `ingest`, `query`, `lint`, `graph`
+Operations: `ingest`, `query`, `lint`

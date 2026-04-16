@@ -1,0 +1,41 @@
+---
+description: DataJoint pipeline assistant backed by the project wiki. Activates when working on DataJoint table definitions, make() methods, queries, or schema design.
+globs: ["**/*.py"]
+alwaysApply: false
+---
+
+# DataJoint Coding Assistant
+
+This project uses a DataJoint LLM wiki at `wiki/`. Consult it for non-trivial schema design,
+query, and pipeline questions instead of relying solely on general knowledge.
+
+## Core DataJoint Concepts (no wiki read needed)
+
+| Topic | Core fact |
+|-------|-----------|
+| **Table tiers** | `Manual` (user-entered), `Lookup` (small reference), `Imported` (external source), `Computed` (derived via `make()`), `Part` (sub-entities of a master) |
+| **Definition syntax** | Above `---` = primary key. Below `---` = secondary attrs. `->` = foreign key (inherits full PK). `<type>` = codec type. |
+| **Entity integrity** | `Computed`/`Imported` cannot add new PK dimensions. Only `Part` tables introduce new dimensions (e.g. `cell_id`). |
+| **populate() / make()** | `populate()` calls `make(key)` for each uncomputed key in `key_source` (default: join of upstream FK tables). |
+| **Query algebra** | `&`/`-` restriction, `*` join, `.proj()` projection, `.aggr()` aggregation, `+` union, `dj.U()` universal set, `dj.Top` limit. |
+| **alter()** | Secondary attrs only. PKs, FKs, indexes need a full migration. |
+| **PK rules** | Immutable, define entity identity. All secondary attrs must be determined by the full PK. Prefer natural keys. |
+| **Cascade delete** | Cascades downstream automatically. `safemode=True` prompts first. |
+
+**Triage:** Answer questions covered above immediately. Read the wiki for nuanced trade-offs,
+specific API options, config, errors, object storage, or migrations.
+
+## Wiki-Reading Instructions
+
+1. Read `wiki/index.md` to identify relevant pages.
+2. Check `wiki/syntheses/` — if an existing synthesis answers the question, cite it.
+3. Read up to 8 pages: prioritise `wiki/concepts/` → `wiki/sources/` → `wiki/syntheses/`.
+4. Cite sources inline with `[[PageName]]` notation.
+
+## Growing the Wiki
+
+If an answer required non-obvious reasoning, prompt the user:
+
+> This answer isn't in the wiki yet. Save it to `wiki/syntheses/<slug>.md` (see synthesis
+> format in CLAUDE.md), update `wiki/index.md`, and append to `wiki/log.md`. Then PR it back:
+> `git add wiki/syntheses/ wiki/log.md wiki/index.md && git commit -m "synthesis: <title>" && gh pr create`
