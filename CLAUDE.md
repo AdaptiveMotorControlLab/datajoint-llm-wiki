@@ -4,10 +4,68 @@
 
 This wiki is maintained entirely by Claude Code. No API key or Python scripts needed — just open this repo in Claude Code and talk to it.
 
+## Coding Assistant Skill
+
+`datajoint-wiki` is a Claude Code skill that acts as an active coding assistant for DataJoint
+work. Unlike `/wiki-query` (which answers explicit questions), this skill auto-triggers whenever
+you are writing table definitions, `make()` methods, queries, or designing schema — and grounds
+its answers in the local wiki instead of guessing.
+
+### What it does differently from `/wiki-query`
+
+| | `/wiki-query` | `datajoint-wiki` skill |
+|---|---|---|
+| Trigger | Explicit slash command | Auto-triggers on DataJoint coding work (global install) or explicit `/datajoint-wiki` (project install) |
+| Focus | Answer a specific question | Assist while you code — suggest patterns, catch design mistakes, cite best practices |
+| Core concepts | Always reads wiki | Baked-in fundamentals answered without a wiki read; wiki consulted for nuanced questions |
+| Synthesis | Offered after query | Offered after any non-trivial answer |
+
+### Installation
+
+**Option A — Global (auto-triggers in every project):**
+```bash
+git clone <repo-url> ~/.claude/skills/datajoint-wiki
+```
+Claude Code discovers `SKILL.md` under `~/.claude/skills/` and auto-invokes the skill when
+you are working on DataJoint tables, queries, or pipelines.
+
+**Option B — Project-scoped (explicit `/datajoint-wiki` only):**
+```bash
+git clone <repo-url> .datajoint-wiki
+cp .datajoint-wiki/skills/datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md
+```
+Or as a git submodule:
+```bash
+git submodule add <repo-url> .datajoint-wiki
+cp .datajoint-wiki/skills/datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md
+```
+
+Project-scoped installs require an explicit `/datajoint-wiki` invocation — agents will not
+auto-trigger the skill. Use the global install if you want automatic wiki-grounded assistance.
+
+### Contribution workflow
+
+When the skill saves a synthesis, it prompts you with:
+```bash
+# Global install:
+cd ~/.claude/skills/datajoint-wiki
+
+# Project-scoped install:
+cd .datajoint-wiki
+
+git add wiki/syntheses/ wiki/log.md wiki/index.md
+git commit -m "synthesis: <title>"
+git push && gh pr create
+```
+PRing syntheses back upstream grows the shared wiki for all users.
+
+---
+
 ## Slash Commands (Claude Code)
 
 | Command | What to say |
 |---|---|
+| `/datajoint-wiki` | `how should I design the primary key for a session table?` |
 | `/wiki-ingest` | `ingest raw/define-tables.md` |
 | `/wiki-query` | `query: how does populate() work?` |
 | `/wiki-lint` | `lint the wiki` |
