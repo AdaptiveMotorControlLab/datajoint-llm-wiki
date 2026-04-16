@@ -32,12 +32,12 @@ you are working on DataJoint tables, queries, or pipelines.
 **Option B — Project-scoped (explicit `/datajoint-wiki` only):**
 ```bash
 git clone <repo-url> .datajoint-wiki
-cp .datajoint-wiki/skills/datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md
+cp .datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md
 ```
 Or as a git submodule:
 ```bash
 git submodule add <repo-url> .datajoint-wiki
-cp .datajoint-wiki/skills/datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md
+cp .datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md
 ```
 
 Project-scoped installs require an explicit `/datajoint-wiki` invocation — agents will not

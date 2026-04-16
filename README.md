@@ -65,13 +65,13 @@ slash command needed.
 
 ```bash
 git clone <repo-url> .datajoint-wiki
-cp .datajoint-wiki/skills/datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md
+cp .datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md
 ```
 
 Or as a submodule:
 ```bash
 git submodule add <repo-url> .datajoint-wiki
-cp .datajoint-wiki/skills/datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md
+cp .datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md
 ```
 
 Project-scoped installs require an explicit `/datajoint-wiki` invocation. Use the global install
@@ -87,9 +87,14 @@ by their respective tools.
 
 ## Usage
 
-### Coding assistant (Claude Code)
+### Coding assistant (Claude Code) — global install
 
-With a global install the skill fires automatically. You can also invoke it explicitly:
+With a **global install** (`~/.claude/skills/datajoint-wiki`) the skill auto-triggers. Open any
+project in Claude Code and start working on DataJoint code — the skill engages automatically
+when Claude detects you are writing table definitions, `make()` methods, queries, or schema
+design. No slash command needed.
+
+You can also invoke it explicitly at any time:
 
 ```
 /datajoint-wiki how should I design the PK for a session table?
@@ -97,13 +102,28 @@ With a global install the skill fires automatically. You can also invoke it expl
 /datajoint-wiki when should I use a Part table vs a downstream Computed table?
 ```
 
-The skill answers from baked-in fundamentals when possible, reads the wiki for nuanced questions,
-and offers to save non-obvious answers as syntheses.
+When the skill runs it will:
+1. Answer basic DataJoint questions immediately from baked-in knowledge (no file reads)
+2. For nuanced questions, locate the wiki and read the relevant pages
+3. Cite sources inline with `[[PageName]]` links
+4. Offer to save non-obvious answers as a synthesis so the wiki grows
+
+### Coding assistant (Claude Code) — project-scoped install
+
+With a **project-scoped install** (`.claude/commands/datajoint-wiki.md`) the skill does not
+auto-trigger. Invoke it explicitly with:
+
+```
+/datajoint-wiki <your question or task>
+```
 
 ### Wiki commands
 
+These work in both install modes and inside the repo itself:
+
 ```
 /wiki-query how does populate() determine key_source?
+/wiki-update-docs
 /wiki-ingest raw/my-new-doc.md
 /wiki-lint
 ```

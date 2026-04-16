@@ -50,7 +50,7 @@ test -f ~/.claude/skills/datajoint-wiki/wiki/index.md && echo "GLOBAL"
 - `PROJECT` → `WIKI_ROOT = .datajoint-wiki/wiki/`
 - `GLOBAL` → `WIKI_ROOT = ~/.claude/skills/datajoint-wiki/wiki/`
 - None found → tell the user:
-  > The DataJoint wiki is not installed. To install globally: `git clone <repo-url> ~/.claude/skills/datajoint-wiki`. To install project-scoped: `git clone <repo-url> .datajoint-wiki && cp .datajoint-wiki/skills/datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md`.
+  > The DataJoint wiki is not installed. To install globally: `git clone <repo-url> ~/.claude/skills/datajoint-wiki`. To install project-scoped: `git clone <repo-url> .datajoint-wiki && cp .datajoint-wiki/SKILL.md .claude/commands/datajoint-wiki.md`.
 
 ### Step 2 — Read `wiki/index.md`
 
