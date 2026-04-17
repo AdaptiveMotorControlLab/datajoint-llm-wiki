@@ -102,3 +102,4 @@ This file is maintained by the LLM. Updated on every ingest.
 - [How to Add New Keys to an Existing Table](syntheses/add-new-keys-to-table.md) — alter() limits, migration pattern, and PK design advice
 - [How to Deal with Long-Duration make() Computations](syntheses/long-duration-make.md) — three-part make, distributed workers, error handling, progress monitoring
 - [Differences Between DataJoint 0.14 and 2.x](syntheses/dj-014-vs-2x-differences.md) — type system, OAS, Jobs 2.0, semantic matching, breaking changes summary
+- [How to store undefined float metrics — the NaN → NULL trap](syntheses/nan-in-float-fields.md) — nullable float fields and _nan_to_none() pattern for Computed tables
