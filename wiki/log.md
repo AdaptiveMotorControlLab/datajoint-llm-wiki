@@ -74,3 +74,5 @@ Parse recent entries: `grep "^## \[" wiki/log.md | tail -10`
 ## [2026-04-16] query | What are the differences between DataJoint 0.14 and 2.x?
 ## [2026-04-16] query | Native types vs core DataJoint types
 ## [2026-04-17] query | How to store undefined float metrics — the NaN → NULL trap
+## [2026-04-17] query | fetch vs to_dicts — choosing a fetch method
+## [2026-04-17] query | How to write integration tests for DataJoint tables

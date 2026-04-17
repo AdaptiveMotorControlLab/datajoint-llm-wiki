@@ -105,3 +105,5 @@ This file is maintained by the LLM. Updated on every ingest.
 - [Differences Between DataJoint 0.14 and 2.x](syntheses/dj-014-vs-2x-differences.md) — type system, OAS, Jobs 2.0, semantic matching, breaking changes summary
 - [How to store undefined float metrics — the NaN → NULL trap](syntheses/nan-in-float-fields.md) — nullable float fields and _nan_to_none() pattern for Computed tables
 - [Native Types vs Core DataJoint Types](syntheses/native-vs-core-types.md) — three-layer type architecture, when to use core types vs codec types
+- [fetch vs to_dicts — choosing a fetch method](syntheses/fetch-vs-to-dicts.md) — decision guide for all fetch methods and 0.14→2.x migration
+- [How to write integration tests for DataJoint tables](syntheses/integration-testing.md) — testcontainers, fixture patterns, testing pre-defined tables without rewriting definitions
