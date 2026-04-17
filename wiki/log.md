@@ -8,6 +8,8 @@ Parse recent entries: `grep "^## \[" wiki/log.md | tail -10`
 
 ---
 
+## [2026-04-17] query | What Happens When a Worker Crashes with reserve_jobs=True
+
 ## [2026-04-15] ingest | Alter Tables
 ## [2026-04-15] ingest | Backup and Restore
 ## [2026-04-15] ingest | Choose Storage Type
